@@ -11,3 +11,8 @@ bash -c "cd $DIR/boot && make"
 # there will be strange linker errors
 riscv32-unknown-elf-gcc -T $DIR/loader.ld -o $DEST $DIR/boot/start.o $@ -static -nostdlib -nostartfiles -lgcc
 riscv32-unknown-elf-objdump -d $DEST > $DEST.txt
+riscv32-unknown-elf-objcopy --set-section-flags .bss=alloc,contents \
+  --set-section-flags .sbss=alloc,contents --set-section-flags .tbss=alloc,contents \
+  -O binary ${DEST} ${DEST}.bin
+truncate -s %8 ${DEST}.bin
+hexdump -ve '1/1 "%02x " "\n"' ${DEST}.bin > ${DEST}.bin.txt

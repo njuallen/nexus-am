@@ -1,45 +1,36 @@
 #include <am.h>
+#include <riscv32-emu.h>
 #include <klib.h>
 
 extern char _end;
 extern int main();
 
-extern volatile uint64_t tohost;
-extern volatile uint64_t fromhost;
-
 #define STKSHIFT 17
-
-// the default size of AsyncScratchPadMemory
-uint32_t mem_size = 1 << 21;
 
 _Area _heap;
 
-void send_command_tohost(uint64_t device, uint64_t cmd, uint64_t payload)
-{
-  uint64_t command = (device << 56) | (cmd << 56 >> 8) | (payload << 16 >> 16);
-  while(tohost != 0);
-  tohost = command;
-}
+volatile static int *halt_addr = (int *)((char *)DEVICE_START + TRAP_OFFSET);
+volatile static char *putc_addr = (char *)DEVICE_START + PUTC_OFFSET;
 
 void _putc(char ch) {
-    // device 1 is bcd
-    // command 1 is write
-    send_command_tohost(1, 1, (uint8_t)ch);
+  *putc_addr = ch;
 }
 
 void _printstr(char *str) {
-  while(str)
+  while(*str)
     _putc(*str++);
 }
 
 void _halt(int code) {
-  send_command_tohost(0, 0, (uint32_t)code << 1 | 1);
+  *halt_addr = code;
   while(1);
 }
 
+// memory mapping
+
 void _trm_init() {
   _heap.start = (void *)(((uintptr_t)&_end + 63) & -64) + (2 << STKSHIFT);
-  _heap.end = (void *)0x80000000 + mem_size;
+  _heap.end = MEM_END;
   int ret = main();
   _halt(ret);
 }
