@@ -22,11 +22,12 @@ else
 LINKLIBS = $(LIBS)
 endif
 
-LINK_FILES += $(AM_HOME)/am/build/am-$(ARCH).a $(OBJS)
+LINK_FILES += $(OBJS)
 LINK_FILES += $(addsuffix -$(ARCH).a, $(join \
   $(addsuffix /build/, $(addprefix $(AM_HOME)/libs/, $(LINKLIBS))), \
   $(LINKLIBS) \
 ))
+LINK_FILES += $(AM_HOME)/am/build/am-$(ARCH).a
 
 .PHONY: app run clean
 app: $(OBJS) am $(LIBS)

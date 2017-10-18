@@ -49,6 +49,7 @@ void _putc(char ch) {
 // -------------------- halting --------------------
 
 void _halt(int code) {
+  /*
   uint32_t cycles_low = get_perf_counter(12);
   uint32_t cycles_high = get_perf_counter(13);
 
@@ -136,6 +137,7 @@ void _halt(int code) {
   printk("dcache read miss cycles(high) = 0x%08x\t%u\n", dcache_r_miss_cycles_high, dcache_r_miss_cycles_high);
 
   printk("time = 0x%08x\t%u\n", time, time);
+  */
 
   const char *msg = (code == 0) ?
     "Exited (0).\n" :

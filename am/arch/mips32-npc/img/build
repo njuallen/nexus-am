@@ -11,4 +11,5 @@ python $DIR/instr_check.py ${DEST}
 
 mips-linux-gnu-objcopy --set-section-flags .bss=alloc,contents -O binary ${DEST} ${DEST}.bin
 truncate -s %8 ${DEST}.bin
-hexdump -ve '2/ "%08x " "\n"' ${DEST}.bin | awk '{print $2$1}' > ${DEST}.bin.txt
+# hexdump -ve '2/ "%08x " "\n"' ${DEST}.bin | awk '{print $2$1}' > ${DEST}.bin.txt
+hexdump -ve '1/1 "%02x " "\n"' ${DEST}.bin > ${DEST}.bin.txt
